@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Student Login</h2>
+
+<button onclick="login()">Login</button>
+<button onclick="logout()">Logout</button>
+
+<h2 id="dashboard"></h2>
+
+<script src="https://cdn.auth0.com/js/auth0-spa-js/2.1/auth0-spa-js.production.js"></script>
+
+<script>
+let client;
+
+async function start() {
+    client = await auth0.createAuth0Client({
+        domain: "dev-ke0gqqu550o17vzd.us.auth0.com",
+        clientId: "6WjqCgKxMsE4RfaHOv8tSR8iLFXPdI1Q",
+        authorizationParams: {
+            redirect_uri: location.origin
+        }
+    });
+
+    if (location.search.includes("code=")) {
+        await client.handleRedirectCallback();
+        history.replaceState({}, "", "/");
+    }
+
+    if (await client.isAuthenticated()) {
+        let user = await client.getUser();
+        document.getElementById("dashboard").innerText =
+            "Welcome " + user.name;
+    }
+}
+
+function login() {
+    client.loginWithRedirect();
+}
+
+function logout() {
+    client.logout({
+        logoutParams: { returnTo: location.origin }
+    });
+}
+
+start();
+</script>
+
+</body>
+</html>
+
