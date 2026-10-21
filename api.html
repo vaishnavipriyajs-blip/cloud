@@ -1,0 +1,22 @@
+
+<html>
+<body>
+
+<h2>API Integration</h2>
+<button onclick="getData()">Get Data</button>
+<p id="result"></p>
+
+<script>
+function getData() {
+    fetch("https://api.openweathermap.org/data/2.5/weather?q=Chennai&appid=a36340410164d119a5d3f1de4ba2a040")
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("result").innerHTML =
+            JSON.stringify(data);
+    })
+    .catch(err => alert("Error fetching data"));
+}
+</script>
+
+</body>
+</html>
