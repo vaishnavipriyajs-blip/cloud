@@ -1,0 +1,33 @@
+sudo apt update
+sudo apt install openjdk-17-jdk scala -y
+java -version
+scala -version
+wget https://dlcdn.apache.org/spark/spark-4.2.0/spark-4.2.0-bin-hadoop3.tgz
+tar -xzf spark-4.2.0-bin-hadoop3.tgz
+mv spark-4.2.0-bin-hadoop3 spark
+gedit ~/.bashrc
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export SPARK_HOME=$HOME/spark
+export PATH=$PATH:$SPARK_HOME/bin
+
+readlink -f $(which java)
+source ~/.bashrc
+echo $SPARK_HOME 
+echo $HOME
+
+spark-shell
+mkdir -p ~/sparkwork
+cd ~/sparkwork
+echo "hello hadoop hello world hadoop" > input.txt
+cat input.txt
+spark-shell
+
+val data = sc.textFile("file:///home/viashu/sparkwork/input.txt")
+val words = data.flatMap(_.split(" "))
+val pairs = words.map(word => (word, 1))
+val counts = pairs.reduceByKey(_ + _)
+counts.collect()
+counts.saveAsTextFile("file:///home/vaishu/sparkwork/output")
+
+
+
