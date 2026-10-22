@@ -1,0 +1,118 @@
+sudo apt install python3
+sudo apt install -y mpich
+mpicc --version
+mpirun --versionsou
+sudo apt install python3-pip
+sudo apt install python3-venv -y
+python3 -m venv mpi-env
+source mpi-env/bin/activate
+
+pip install mpi4py
+sudo apt-get install libopenmpi-dev
+sudo apt-get install openmpi-bin
+
+source mpi-env/bin/activate
+gedit mpi.pysoo
+
+from mpi4py import MPI
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+print("Hello from process", rank, "of" , size)
+
+[
+
+
+from mpi4py import MPI
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+if rank == 0:
+    data = list(range(100, 0, -1))
+else:
+    data = None
+
+# Divide the array among processes
+parts = comm.scatter(
+    [data[i * (100 // size):(i + 1) * (100 // size)]
+     for i in range(size)] if rank == 0 else None,
+    root=0
+)
+
+# Sort each part
+parts.sort()
+
+# Gather sorted parts at process 0
+result = comm.gather(parts, root=0)
+
+if rank == 0:
+    # Combine and sort the complete array
+    final_array = sorted(
+        value for part in result for value in part
+    )
+
+    print("Sorted array:")
+    print(final_array)
+
+
+]
+
+
+
+
+mpiexec -oversubscribe -n 4 python3 mpi.py
+
+OPENMP:
+
+sudo apt install gcc
+gedit openmp.c
+ 
+
+#include <stdio.h>
+#include<omp.h>
+int main()
+{
+#pragma omp parallel
+{
+printf("helli form thread %d \n",omp_get_thread_num());
+}
+return 0;
+}
+
+
+[
+
+
+
+#include <stdio.h>
+#include <omp.h>
+
+int main()
+{
+    int a[10] = {1,2,3,4,5,6,7,8,9,10};
+    int sum = 0;
+    int i;
+
+    #pragma omp parallel for reduction(+:sum)
+    for(i = 0; i < 10; i++)
+    {
+        sum += a[i];
+        printf("Thread %d is processing %d\n",
+               omp_get_thread_num(), a[i]);
+    }
+
+    printf("Sum = %d\n", sum);
+
+    return 0;
+}
+
+]
+
+
+gcc -fopenmp openmp.c -o openmp
+./openmp
+export OMP_NUM_THREADS=4
+
+
